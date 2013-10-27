@@ -24,10 +24,9 @@ var toFunction = function(values) {
 };
 
 var tab = function(name) {
-	if (typeof name === 'function') return module.exports(name.name, name);
+	var index = name ? 1 : 0;
 
-	var index = 1;
-
+	name = name || '__main__';
 	options[name] = {};
 	positionals[name] = {};
 
@@ -75,7 +74,7 @@ tab.complete = function(index, words) {
 	};
 
 	if (cur.slice(0, 2) === '--') {
-		var names = Object.keys(options[cmd] || {});
+		var names = Object.keys(options[cmd] || options.__main__ ||  {});
 		return callback(null, names.map(opt));
 	}
 
@@ -84,53 +83,67 @@ tab.complete = function(index, words) {
 
 	if (prev.slice(0, 2) === '--') {
 		var name = unopt(prev);
-		var fn = (options[cmd] || {})[name];
+		var fn = (options[cmd] || options.__main__ || {})[name];
 		return fn ? fn(callback) : callback();
 	}
 
 	if (prev[0] === '-' || cur[0] === '-') return callback();
 
-	if (_.length < 2) return callback(null, Object.keys(cmds));
-
 	index = _.length-1;
 
-	if (!positionals[cmd] || !positionals[cmd][index]) return callback();
+	var pos = (positionals[cmd] || positionals.__main__ || {})[index];
+	if (pos) return pos(callback);
 
-	positionals[cmd][index](callback);
+	if (_.length < 2) {
+		delete cmds.__main__
+		return callback(null, Object.keys(cmds));
+	}
+
+	callback();
 };
 
 tab.help = function() {
 	console.log('Unknown command');
 };
 
+tab.install = function() {
+	require('./install'); // deferred required for faster tab completion load
+};
+
 tab.parse = function(argv) {
 	argv = argv || process.argv.slice(2);
 
 	if (argv[0] === '--tabalot') {
-		if (argv.length === 1) require('./install');
+		if (argv.length === 1) tab.install();
 		else tab.complete(Number(argv[1]), argv.slice(2));
 		process.exit(0);
 	}
 
 	argv = minimist(argv);
+
+	var apply = function(cmd) {
+		var arity = Object.keys(positionals[cmd]).length;
+		var args = [];
+
+		for (var i = 0; i < arity; i++) {
+			args[i] = argv._[i];
+		}
+
+		delete argv._;
+		args.push(argv);
+		cmds[cmd].apply(null, args);
+		return true;
+	};
+
 	var cmd = argv._[0];
 
-	if (!cmds[cmd]) return false;
-
-	argv._.shift();
-
-	var arity = Object.keys(positionals[cmd]).length;
-	var args = [];
-
-	for (var i = 0; i < arity; i++) {
-		args[i] = argv._[i];
+	if (!cmds[cmd]) {
+		if (cmds.__main__) return apply('__main__');
+		return false;
 	}
 
-	delete argv._;
-	args.push(argv);
-	cmds[cmd].apply(null, args);
-
-	return true;
+	argv._.shift();
+	return apply(cmd);
 };
 
 module.exports = tab;
