@@ -16,6 +16,15 @@ var opt = function(name) {
 	return '--'+name;
 };
 
+var normalize = function(argv) {
+	Object.keys(argv).forEach(function(arg) {
+		if (!aliases['-'+arg]) return;
+		argv[unopt(aliases['-'+arg])] = argv[arg];
+		delete argv[arg];
+	});
+	return argv;
+};
+
 var toFunction = function(values) {
 	if (typeof values === 'function') return values;
 	return function(callback) {
@@ -64,7 +73,8 @@ tab.all = function() {
 tab.complete = function(index, words, callback) {
 	var cur = words[index] || '';
 	var prev = words[index-1] || '';
-	var _ = minimist(words.slice(0, index+1))._;
+	var argv = normalize(minimist(words.slice(0, index+1)));
+	var _ = argv._;
 	var cmd = _[0];
 
 	var finish = function(err, values) {
@@ -80,13 +90,13 @@ tab.complete = function(index, words, callback) {
 		return finish(null, names.map(opt));
 	}
 
-	if (aliases[cur]) return console.log(aliases[cur]);
+	if (aliases[cur]) return callback(null, [aliases[cur]]);
 	if (aliases[prev]) prev = aliases[prev];
 
 	if (prev.slice(0, 2) === '--') {
 		var name = unopt(prev);
 		var fn = (options[cmd] || options.__main__ || {})[name];
-		return fn ? fn(finish) : finish();
+		return fn ? fn.call(argv, finish) : finish();
 	}
 
 	if (prev[0] === '-' || cur[0] === '-') return finish();
@@ -94,10 +104,10 @@ tab.complete = function(index, words, callback) {
 	index = _.length-1;
 
 	var pos = (positionals[cmd] || positionals.__main__ || {})[index];
-	if (pos) return pos(finish);
+	if (pos) return pos.call(argv, finish);
 
 	if (_.length < 2) {
-		delete cmds.__main__
+		delete cmds.__main__;
 		return finish(null, Object.keys(cmds));
 	}
 
@@ -109,7 +119,7 @@ tab.help = function() {
 };
 
 tab.install = function() {
-	require('./install'); // deferred required for faster tab completion load
+	require('./install'); // deferred require for faster tab completion load
 };
 
 tab.parse = function(argv) {
@@ -127,7 +137,7 @@ tab.parse = function(argv) {
 		return;
 	}
 
-	argv = minimist(argv);
+	argv = normalize(minimist(argv));
 
 	var apply = function(cmd) {
 		process.nextTick(function() {
@@ -140,11 +150,6 @@ tab.parse = function(argv) {
 
 			delete argv._;
 			args.push(argv);
-			Object.keys(argv).forEach(function(arg) {
-				if (!aliases['-'+arg]) return;
-				argv[unopt(aliases['-'+arg])] = argv[arg];
-				delete argv[arg];
-			});
 			cmds[cmd].apply(null, args);
 		});
 		return true;
