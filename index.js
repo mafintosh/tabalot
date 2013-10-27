@@ -61,23 +61,23 @@ tab.all = function() {
 	return tab.all;
 };
 
-tab.complete = function(index, words) {
+tab.complete = function(index, words, callback) {
 	var cur = words[index] || '';
 	var prev = words[index-1] || '';
 	var _ = minimist(words.slice(0, index+1))._;
 	var cmd = _[0];
 
-	var callback = function(err, values) {
+	var finish = function(err, values) {
 		if (err) return;
 		values = [].concat(values || []).filter(function(value) {
 			return (''+value).slice(0, cur.length) === cur;
 		});
-		console.log(values.join('\n'));
+		callback(null, values);
 	};
 
 	if (cur.slice(0, 2) === '--') {
 		var names = Object.keys(options[cmd] || options.__main__ ||  {});
-		return callback(null, names.map(opt));
+		return finish(null, names.map(opt));
 	}
 
 	if (aliases[cur]) return console.log(aliases[cur]);
@@ -86,22 +86,22 @@ tab.complete = function(index, words) {
 	if (prev.slice(0, 2) === '--') {
 		var name = unopt(prev);
 		var fn = (options[cmd] || options.__main__ || {})[name];
-		return fn ? fn(callback) : callback();
+		return fn ? fn(finish) : finish();
 	}
 
-	if (prev[0] === '-' || cur[0] === '-') return callback();
+	if (prev[0] === '-' || cur[0] === '-') return finish();
 
 	index = _.length-1;
 
 	var pos = (positionals[cmd] || positionals.__main__ || {})[index];
-	if (pos) return pos(callback);
+	if (pos) return pos(finish);
 
 	if (_.length < 2) {
 		delete cmds.__main__
-		return callback(null, Object.keys(cmds));
+		return finish(null, Object.keys(cmds));
 	}
 
-	callback();
+	finish();
 };
 
 tab.help = function() {
@@ -116,9 +116,15 @@ tab.parse = function(argv) {
 	argv = argv || process.argv.slice(2);
 
 	if (argv[0] === '--tabalot') {
-		if (argv.length === 1) tab.install();
-		else tab.complete(Number(argv[1]), argv.slice(2));
-		process.exit(0);
+		if (argv.length === 1) {
+			tab.install();
+			process.exit(0);
+		}
+		tab.complete(Number(argv[1]), argv.slice(2), function(err, words) {
+			console.log((words || []).join('\n'))
+			process.exit(0);
+		});
+		return;
 	}
 
 	argv = minimist(argv);
