@@ -2,6 +2,12 @@
 
 var tab = require('../index');
 
+tab()
+	('--debug', '-d')
+	(function(opts) {
+		console.log('I am called if no one else matches');
+	})
+
 tab('hello')(['first', 'argument', 'here'])
 	('--tab', '-t', ['a', 'b', 'c'])
 	('--debug', '-d')
@@ -13,7 +19,7 @@ tab('hello')(['first', 'argument', 'here'])
 		console.log('I was called with this positional argument:');
 		console.log(first);
 		console.log('and these options');
-		console.log(options);
+		console.log(opts);
 	})
 
 tab.parse() || tab.help();
