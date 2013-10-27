@@ -1,6 +1,8 @@
 {
   "name": "tabalot",
   "version": "0.0.1",
+  "description": "Tab complete all the things",
+  "repository": "git://github.com/mafintosh/tabalot.git",
   "dependencies": {
     "minimist": "0.0.5"
   }
