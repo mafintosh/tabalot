@@ -7,17 +7,10 @@ Tab complete all the things!
 tabalot is a node module that lets you build command line apps with
 rich built in tab completion support
 
-After installing the module you need to either source your bash profile
-again or do
-
-	. ~/.tabalot/rc
-
-This will init the completer. You only need to do this once.
-
 ## Getting started
 
 Lets make a sample app and link it with npm.
-Write the example below to a file called `my-app.js`
+Write the example below to a file called `app.js`
 
 ``` js
 #!/usr/bin/env node
@@ -28,28 +21,42 @@ tab('hello')
 		console.log('world');
 	})
 
-tab.parse()
+tab.parse();
 ```
 
-You need to add a `package.json` file as well to make npm link it.
-The `package.json` below will just make `my-app.js` executable as `my-app`
+You need to add a `package.json` file as well.
+The one below will make `app.js` executable as `tabtest`
+and add a tab completion link.
 
 ``` js
 {
-	"name": "my-app",
+	"name": "tabtest",
 	"bin": {
-		"my-app": "./my-app.js"
+		// required! we need a bin name
+		"tabtest": "./app.js"
+	},
+	"scripts": {
+		// required! we need to setup the completion
+		"postinstall": "./app.js --tabalot"
 	}
 }
 ```
 
-Call `npm link .` to link the app. Try opening a shell and do
+To try the app locally just use npm to link it
 
-	my-app <tab>
-	my-app hello <enter>
+	npm link            # will add the app to your path
+	. ~/.tabalot/bashrc # will source tabcompletion in the current shell
+	                    # this happens automatically when you open a new shell
+
+The app is now installed and ready to be tab completed.
+Open a shell and try the following
+
+	tabtest <tab>
+	tabtest hello <enter>
 	world
 
-It is as simple as that
+It is as simple as that. If you publish your package to npm it will be installable
+with tab completion by using a standard `npm install -g tabtest`
 
 ## Completing arguments
 
@@ -69,11 +76,11 @@ and a `--world` argument that should complete to one of the 3 values.
 
 Try running
 
-	my-app <tab>
-	my-app hello --<tab><tab>       # prints --world --debug
-	my-app hello --world <tab><tab> # prints world verden welt
-	my-app hello --world v<tab>
-	my-app hello --world verden <enter>
+	tabtest <tab>
+	tabtest hello --<tab><tab>       # prints --world --debug
+	tabtest hello --world <tab><tab> # prints world verden welt
+	tabtest hello --world v<tab>
+	tabtest hello --world verden <enter>
 
 The above program will output
 
@@ -97,10 +104,10 @@ tab('hello')
 
 Try running
 
-	my-app <tab>
-	my-app hello <tab><tab> # prints world verden welt
-	my-app hello v<tab>
-	my-app hello verden <enter>
+	tabtest <tab>
+	tabtest hello <tab><tab> # prints world verden welt
+	tabtest hello v<tab>
+	tabtest hello verden <enter>
 
 The above program will output
 
