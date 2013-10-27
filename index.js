@@ -75,7 +75,7 @@ tab.complete = function(index, words, callback) {
 		callback(null, values);
 	};
 
-	if (cur.slice(0, 2) === '--') {
+	if (cur.slice(0, 2) === '--' || cur === '-') {
 		var names = Object.keys(options[cmd] || options.__main__ ||  {});
 		return finish(null, names.map(opt));
 	}
