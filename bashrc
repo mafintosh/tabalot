@@ -7,10 +7,7 @@ _tabalot () {
 }
 
 if [ -f ~/.tabalot/completions ]; then
-	TABALOT=""
 	while read app; do
-		TABALOT="$TABALOT:$app"
 		complete -F _tabalot "$app"
 	done < ~/.tabalot/completions
-	export TABALOT="${TABALOT:1}"
 fi
