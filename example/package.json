@@ -1,0 +1,9 @@
+{
+	"name": "tabtest",
+	"bin": {
+		"tabtest": "./app.js"
+	},
+	"scripts": {
+		"install": "./app.js --tabalot"
+	}
+}
