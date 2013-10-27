@@ -32,12 +32,10 @@ and add a tab completion link.
 {
 	"name": "tabtest",
 	"bin": {
-		// required! we need a bin name
-		"tabtest": "./app.js"
+		"tabtest": "./app.js" // we need a bin name
 	},
 	"scripts": {
-		// required! we need to setup the completion
-		"postinstall": "./app.js --tabalot"
+		"install": "./app.js --tabalot" // install the completion
 	}
 }
 ```
