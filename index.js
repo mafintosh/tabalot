@@ -86,7 +86,7 @@ tab.complete = function(index, words, callback) {
 	};
 
 	if (cur.slice(0, 2) === '--' || cur === '-') {
-		var names = Object.keys(options[cmd] || options.__main__ ||  {});
+		var names = Object.keys(options[cmd] || options.__main__ || options.__all__ || {});
 		return finish(null, names.map(opt));
 	}
 
@@ -95,7 +95,7 @@ tab.complete = function(index, words, callback) {
 
 	if (prev.slice(0, 2) === '--') {
 		var name = unopt(prev);
-		var fn = (options[cmd] || options.__main__ || {})[name];
+		var fn = (options[cmd] || options.__main__ || options.__all__ || {})[name];
 		return fn ? fn.call(argv, finish) : finish();
 	}
 
@@ -108,6 +108,7 @@ tab.complete = function(index, words, callback) {
 
 	if (_.length < 2) {
 		delete cmds.__main__;
+		delete cmds.__all__;
 		return finish(null, Object.keys(cmds));
 	}
 
@@ -130,6 +131,7 @@ tab.parse = function(argv) {
 			tab.install();
 			process.exit(0);
 		}
+		tab('__all__');
 		tab.complete(Number(argv[1]), argv.slice(2), function(err, words) {
 			console.log((words || []).join('\n'))
 			process.exit(0);
