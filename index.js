@@ -140,6 +140,11 @@ tab.parse = function(argv) {
 
 			delete argv._;
 			args.push(argv);
+			Object.keys(argv).forEach(function(arg) {
+				if (!aliases['-'+arg]) return;
+				argv[unopt(aliases['-'+arg])] = argv[arg];
+				delete argv[arg];
+			});
 			cmds[cmd].apply(null, args);
 		});
 		return true;
