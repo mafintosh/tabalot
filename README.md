@@ -42,9 +42,8 @@ and add a tab completion link.
 
 To try the app locally just use npm to link it
 
-	npm link            # will add the app to your path
-	. ~/.tabalot/bashrc # will source tabcompletion in the current shell
-	                    # this happens automatically when you open a new shell
+	npm link  # will add the app to your path
+	          # and print out instructions how to setup tab completion
 
 The app is now installed and ready to be tab completed.
 Open a shell and try the following

@@ -19,10 +19,6 @@ if (!fs.existsSync(CONFIG)) {
 
 var SOURCING = fs.readFileSync(PROFILE, 'utf-8').indexOf('. ~/.tabalot/bashrc') > -1;
 
-if (!SOURCING) {
-	fs.appendFileSync(PROFILE, '\n[ -f . ~/.tabalot/bashrc ] && . ~/.tabalot/bashrc\n');
-}
-
 if (!BIN) return;
 
 var data = '';
@@ -35,5 +31,15 @@ try {
 
 if (data.indexOf(BIN) < 0) fs.appendFileSync(path.join(CONFIG, 'bin'), BIN+'\n');
 
-console.log('Tab completion installed for '+BIN+(SOURCING ? '' : ' and added to '+PROFILE.replace(HOME, '~'))+'\n');
-console.log('To enable it restart your terminal or\n. ~/.tabalot/bashrc\n');
+if (SOURCING) {
+	console.log(
+		'Enable tab completion for '+BIN+' by\n'+
+		'restarting your terminal or sourcing '+PROFILE.replace(HOME, '~')+'\n'
+	);
+} else {
+	console.log(
+		'Enable tab completion for '+BIN+' by\n'+
+		'adding the following to '+PROFILE.replace(HOME, '~')+'\n\n'+
+		'[ -f ~/.tabalot/bashrc ] && . ~/.tabalot/bashrc\n'
+	);
+}
