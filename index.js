@@ -94,18 +94,14 @@ tab.help = function() {
 };
 
 tab.parse = function(argv) {
-	var bin = (process.env._ || '').split('/').pop();
-	var installed = (process.env.TABALOT || '').split(':');
-
-	if (bin && installed.indexOf(bin) < 0) {
-		require('./install')(bin);
-	}
-
 	argv = argv || process.argv.slice(2);
+
 	if (argv[0] === '--tabalot') {
-		tab.complete(Number(argv[1]), argv.slice(2));
+		if (argv.length === 1) require('./install');
+		else tab.complete(Number(argv[1]), argv.slice(2));
 		process.exit(0);
 	}
+
 	argv = minimist(argv);
 	var cmd = argv._[0];
 
