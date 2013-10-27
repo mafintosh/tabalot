@@ -2,15 +2,18 @@
 
 var tab = require('../index');
 
-tab('hello')()()
+tab('hello')(['first', 'argument', 'here'])
 	('--tab', '-t', ['a', 'b', 'c'])
-	('--abe', '-a')
-	('--test', ['abe', 'fest', process.env._])
+	('--debug', '-d')
+	('--test', ['foo', 'bar', 'baz'])
 	('--random', function(callback) {
 		callback(null, Math.random());
 	})
-	(function(a, b, opts) {
-		require('./install')
+	(function(first, opts) {
+		console.log('I was called with this positional argument:');
+		console.log(first);
+		console.log('and these options');
+		console.log(options);
 	})
 
 tab.parse() || tab.help();
