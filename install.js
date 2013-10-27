@@ -25,12 +25,15 @@ if (!SOURCING) {
 
 if (!BIN) return;
 
+var data = '';
+
 try {
-	var data = fs.readFileSync(path.join(CONFIG, 'bin'), 'utf-8').split('\n');
-	if (data.indexOf(BIN) < 0) fs.appendFileSync(path.join(CONFIG, 'bin'), BIN+'\n');
+	data = fs.readFileSync(path.join(CONFIG, 'bin'), 'utf-8').split('\n');
 } catch (err) {
 	// do nothing
 }
+
+if (data.indexOf(BIN) < 0) fs.appendFileSync(path.join(CONFIG, 'bin'), BIN+'\n');
 
 console.log('Tab completion installed for '+BIN+(SOURCING ? '' : ' and added to '+PROFILE.replace(HOME, '~'))+'\n');
 console.log('To enable it restart your terminal or\n. ~/.tabalot/bashrc\n');
