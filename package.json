@@ -1,0 +1,7 @@
+{
+  "name": "tabalot",
+  "version": "0.0.1",
+  "dependencies": {
+    "minimist": "0.0.5"
+  }
+}
