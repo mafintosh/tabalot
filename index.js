@@ -4,6 +4,7 @@ var cmds = {};
 var options = {};
 var positionals = {};
 var aliases = {};
+var all = [];
 
 var noop = function() {};
 
@@ -47,7 +48,16 @@ var tab = function(name) {
 		return opt;
 	};
 
+	all.forEach(function(args) {
+		opt.apply(null, args);
+	});
+
 	return opt;
+};
+
+tab.all = function() {
+	all.push(arguments);
+	return tab.all;
 };
 
 tab.complete = function(index, words) {
