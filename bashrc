@@ -6,8 +6,8 @@ _tabalot () {
     ))
 }
 
-if [ -f ~/.tabalot/completions ]; then
+if [ -f ~/.tabalot/bin ]; then
 	while read app; do
 		complete -F _tabalot "$app"
-	done < ~/.tabalot/completions
+	done < ~/.tabalot/bin
 fi
