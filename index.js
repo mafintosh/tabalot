@@ -124,16 +124,18 @@ tab.parse = function(argv) {
 	argv = minimist(argv);
 
 	var apply = function(cmd) {
-		var arity = Object.keys(positionals[cmd]).length;
-		var args = [];
+		process.nextTick(function() {
+			var arity = Object.keys(positionals[cmd]).length;
+			var args = [];
 
-		for (var i = 0; i < arity; i++) {
-			args[i] = argv._[i];
-		}
+			for (var i = 0; i < arity; i++) {
+				args[i] = argv._[i];
+			}
 
-		delete argv._;
-		args.push(argv);
-		cmds[cmd].apply(null, args);
+			delete argv._;
+			args.push(argv);
+			cmds[cmd].apply(null, args);
+		});
 		return true;
 	};
 
