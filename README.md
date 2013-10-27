@@ -104,9 +104,7 @@ Try running
 
 The above program will output
 
-	{
-		world: 'verden'
-	}
+	'verden'
 
 ## Dynamic completion
 
