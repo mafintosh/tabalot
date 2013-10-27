@@ -125,6 +125,19 @@ tab('hello')
 	})
 ```
 
+## Catch-all route
+
+If you omit the command name from tab that route will be called and tab completed
+if no one else matches
+
+``` js
+tab()
+	('--world', '-w', ['world', 'welt'])
+	(function() {
+		console.log('I was called by doing tabtest --world world');
+	})
+```
+
 # License
 
 MIT
