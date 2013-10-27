@@ -104,7 +104,7 @@ Try running
 
 The above program will output
 
-	'verden'
+	verden
 
 ## Dynamic completion
 
