@@ -34,7 +34,7 @@ if (data.indexOf(BIN) < 0) fs.appendFileSync(path.join(CONFIG, 'bin'), BIN+'\n')
 if (SOURCING) {
 	console.log(
 		'Enable tab completion for '+BIN+' by\n'+
-		'restarting your terminal or sourcing '+PROFILE.replace(HOME, '~')+'\n'
+		'restarting your terminal or\n\n. ~/.tabalot/bashrc\n'
 	);
 } else {
 	console.log(
