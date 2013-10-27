@@ -24,6 +24,8 @@ var toFunction = function(values) {
 };
 
 var tab = function(name) {
+	if (typeof name === 'function') return tab()(name);
+
 	var index = name ? 1 : 0;
 
 	name = name || '__main__';
