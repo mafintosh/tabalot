@@ -136,7 +136,7 @@ tab.parse = function(argv) {
 			console.log((words || []).join('\n'))
 			process.exit(0);
 		});
-		return;
+		return true;
 	}
 
 	argv = normalize(minimist(argv));
