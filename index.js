@@ -19,7 +19,8 @@ var opt = function(name) {
 var normalize = function(argv) {
 	Object.keys(argv).forEach(function(arg) {
 		if (!aliases['-'+arg]) return;
-		argv[unopt(aliases['-'+arg])] = argv[arg];
+		var opt = unopt(aliases['-'+arg]);
+		argv[opt] = argv[opt] ? [].concat(argv[opt], argv[arg]) : argv[arg];
 		delete argv[arg];
 	});
 	return argv;
@@ -71,6 +72,8 @@ tab.all = function() {
 };
 
 tab.complete = function(index, words, callback) {
+	if (!cmds.__all__) tab('__all__');
+
 	var cur = words[index] || '';
 	var prev = words[index-1] || '';
 	var argv = normalize(minimist(words.slice(0, index+1)));
@@ -107,9 +110,10 @@ tab.complete = function(index, words, callback) {
 	if (pos) return pos.call(argv, finish);
 
 	if (_.length < 2) {
-		delete cmds.__main__;
-		delete cmds.__all__;
-		return finish(null, Object.keys(cmds));
+		var words = Object.keys(cmds).filter(function(cmd) {
+			return cmd !== '__main__' && cmd !== '__all__';
+		});
+		return finish(null, words);
 	}
 
 	finish();
@@ -131,7 +135,6 @@ tab.parse = function(argv) {
 			tab.install();
 			process.exit(0);
 		}
-		tab('__all__');
 		tab.complete(Number(argv[1]), argv.slice(2), function(err, words) {
 			console.log((words || []).join('\n'))
 			process.exit(0);
@@ -142,12 +145,17 @@ tab.parse = function(argv) {
 	argv = normalize(minimist(argv));
 
 	var apply = function(cmd) {
+		var offset = cmd ? 1 : 0;
+
+		if (!cmd) cmd = '__main__';
+		if (!cmds[cmd]) return false;
+
 		process.nextTick(function() {
-			var arity = Object.keys(positionals[cmd]).length;
+			var arity = Object.keys(positionals[cmd || '__main__']).length;
 			var args = [];
 
 			for (var i = 0; i < arity; i++) {
-				args[i] = argv._[i];
+				args[i] = argv._[i+offset];
 			}
 
 			args.push(argv);
@@ -158,13 +166,8 @@ tab.parse = function(argv) {
 
 	var cmd = argv._[0];
 
-	if (!cmds[cmd]) {
-		if (cmds.__main__) return apply('__main__');
-		return false;
-	}
-
-	argv._.shift();
-	return apply(cmd);
+	if (apply(cmd)) return true;
+	return apply();
 };
 
 module.exports = tab;
