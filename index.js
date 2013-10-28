@@ -150,7 +150,6 @@ tab.parse = function(argv) {
 				args[i] = argv._[i];
 			}
 
-			delete argv._;
 			args.push(argv);
 			cmds[cmd].apply(null, args);
 		});
