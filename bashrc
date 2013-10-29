@@ -1,9 +1,9 @@
 #!/bin/bash
 
 _tabalot () {
-    COMPREPLY=($(
-		"$1" --tabalot $(( $COMP_CWORD - 1 )) "${COMP_WORDS[@]:1}" 2> /dev/null
-    ))
+	local opts="$("$1" --tabalot $(( $COMP_CWORD - 1 )) "${COMP_WORDS[@]:1}" 2> /dev/null)"
+	local IFS=$'\n'
+	COMPREPLY=($(echo "$opts"))
 }
 
 if [ -f ~/.tabalot/bin ]; then
