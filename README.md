@@ -38,9 +38,12 @@ The one below will make `app.js` executable as `tabtest`
 
 To try the app locally just use npm to link it
 
-	npm link                  # will add the app to your path
+	npm link # will add the app to your path
+
+And install the tab completion
+
 	tabtest completion --save # installs the completion to your
-	                          # $BASH_COMPLETION_DIR
+	                          # bash_completion.d folder
 
 The app is now installed and ready to be tab completed.
 Open a shell and try the following
