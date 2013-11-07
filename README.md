@@ -42,8 +42,7 @@ To try the app locally just use npm to link it
 
 And install the tab completion
 
-	tabtest completion --save # installs the completion to your
-	                          # bash_completion.d folder
+	tabtest completion --save # installs the completion to your bash_completion.d folder
 
 The app is now installed and ready to be tab completed.
 Open a shell and try the following
