@@ -8,16 +8,16 @@ tab()
 		console.log('I am called if no one else matches');
 	})
 
-tab('hello')(['first', 'argument', 'here'])
+tab('hello')('@file')(['second', 'argument', 'here'])
 	('--tab', '-t', ['a', 'b', 'c'])
 	('--debug', '-d')
 	('--test', ['foo', 'bar', 'baz'])
 	('--random', function(callback) {
 		callback(null, Math.random());
 	})
-	(function(first, opts) {
-		console.log('I was called with this positional argument:');
-		console.log(first);
+	(function(file, second, opts) {
+		console.log('I was called with these positional argument:');
+		console.log(file, second);
 		console.log('and these options');
 		console.log(opts);
 	})
