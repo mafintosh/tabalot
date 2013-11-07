@@ -2,12 +2,11 @@
 #
 # Auto install by doing:
 #  {cmd} completion --save
-#  source {profile}
 #
-# Which is similar to doing
+# Which similar to
 #  {cmd} completion > {completionDir}/{cmd}
-#  source {profile}
 #
+# Remember to source {profile} or restart your terminal afterwards
 # Manual install by adding the following to {profile}
 
 _{cmd}_completion () {

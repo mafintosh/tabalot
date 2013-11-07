@@ -8,6 +8,9 @@ var aliases = {};
 var toFunction = function(values) {
 	if (typeof values === 'function') return values;
 
+	if (values === '@file') return require('./helpers').file;
+	if (values === '@host') return require('./helpers').host;
+
 	return function(callback) {
 		callback(null, values);
 	};
@@ -86,57 +89,63 @@ var complete = function(index, words) {
 	var _ = minimist(words.slice(0, index+1))._;
 	var cmd = _[0];
 
-	var filter = function(err, values) {
-		if (err) return finish(err);
-		values = [].concat(values || []).map(String).filter(function(value) {
-			return value.slice(0, cur.length) === cur;
-		});
-		finish(null, values);
-
-	};
-	var finish = function(err, values) {
+	var callback = function(err, values, opts) {
 		if (err) return process.exit(1);
-		console.log(values.join('\n'));
-		process.exit(0);
+		if (!opts) opts = {};
+
+		values = [].concat(values || []).map(String);
+
+		if (opts.filter !== false) {
+			values = values.filter(function(value) {
+				return value.slice(0, cur.length) === cur;
+			});
+		}
+
+		process.stdout.write(values.join('\n'), function() {
+			process.exit(opts.exitCode || 0);
+		});
 	};
 
 	if (cur.slice(0, 2) === '--' || cur === '-') {
 		var names = Object.keys(options[cmd] || options.__main__ || options['*'] || {});
-		return filter(null, names.map(opt));
+		return callback(null, names.map(opt));
 	}
 
-	if (aliases[cur]) return finish(null, [aliases[cur]]);
-	if (aliases[prev]) prev = aliases[prev];
+	if (cur[0] === '-') {
+		var alias = aliases[deopt(cur)];
+		return alias ? callback(null, [opt(alias)], {filter:false}) : callback();
+	}
 
-	if (prev.slice(0, 2) === '--') {
-		var name = unopt(prev);
-		var fn = (options[cmd] || options.__main__ || options['*'] || {})[name];
-		if (fn) return call(fn, cur, argv, filter);
-		return filter();
+	if (prev[0] === '-') {
+		var name = deopt(prev);
+		var fn = (options[cmd] || options.__main__ || options['*'] || {})[aliases[name] || name];
+		if (fn) return call(fn, cur, argv, callback);
+		return callback();
 	}
 
 	index = _.length-1;
 	var pos = (positionals[cmd] || positionals.__main__ || {})[index];
-	if (pos) return call(pos, cur, argv, filter);
+	if (pos) return call(pos, cur, argv, callback);
 
-	if (prev[0] === '-' || cur[0] === '-') return filter();
-	if (_.length > 1) return filter();
+	if (prev[0] === '-' || cur[0] === '-') return callback();
+	if (_.length > 1) return callback();
 
 	var words = Object.keys(cmds).filter(function(cmd) {
 		return cmd !== '__main__' && cmd !== '*';
 	});
 
-	return filter(null, words);
+	return callback(null, words);
 };
 
 tab.parse = function(argv) {
 	argv = argv || process.argv.slice(2);
 
-	if (argv[0] === '--tabalot' && argv.length === 1) {
-		return require('./install');
+	if (argv[0] === 'completion' && argv[1] === '--') {
+		complete(Number(argv[2]), argv.slice(3));
+		return true;
 	}
-	if (argv[0] === '--tabalot') {
-		return complete(Number(argv[1]), argv.slice(2));
+	if (argv[0] === 'completion') {
+		require('./completion')(tab);
 	}
 
 	argv = normalize(minimist(argv));
