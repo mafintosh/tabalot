@@ -26,24 +26,21 @@ tab.parse();
 
 You need to add a `package.json` file as well.
 The one below will make `app.js` executable as `tabtest`
-and add a tab completion link.
 
 ``` js
 {
 	"name": "tabtest",
 	"bin": {
 		"tabtest": "./app.js" // we need a bin name
-	},
-	"scripts": {
-		"install": "./app.js --tabalot" // install the completion
 	}
 }
 ```
 
 To try the app locally just use npm to link it
 
-	npm link  # will add the app to your path
-	          # and print out instructions how to setup tab completion
+	npm link           # will add the app to your path
+	tabtest completion # prints out the completion and install instructions
+	                   # add --save to install to your $BASH_COMPLETION_DIR
 
 The app is now installed and ready to be tab completed.
 Open a shell and try the following
@@ -52,8 +49,7 @@ Open a shell and try the following
 	tabtest hello <enter>
 	world
 
-It is as simple as that. If you publish your package to npm it will be installable
-with tab completion by using a standard `npm install -g tabtest`
+It is as simple as that.
 
 ## Completing arguments
 
