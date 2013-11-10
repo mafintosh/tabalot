@@ -83,6 +83,14 @@ var call = function(fn, word, opts, callback) {
 };
 
 var complete = function(index, words) {
+	var ch = words[index][0];
+
+	words = words.map(function(word) {
+		if (word[0] === '"') return word.replace(/(^")|("$)/g, '').replace(/\\"/g, '"');
+		if (word[0] === "'") return word.replace(/(^')|('$)/g, '').replace(/\\'/g, "'");
+		return word.replace(/\\(.)/g, '$1');
+	});
+
 	var cur = words[index] || '';
 	var prev = words[index-1] || '';
 	var argv = normalize(minimist(words));
@@ -100,6 +108,12 @@ var complete = function(index, words) {
 				return value.slice(0, cur.length) === cur;
 			});
 		}
+
+		values = values.map(function(word) {
+			if (ch === '"') return word.replace(/"/g, '\\"')+'"';
+			if (ch === "'") return word.replace(/'/g, "\\'")+"'";
+			return word.replace(/([ ;!"'$()\[\]^{}&*?\\<>,`|])/g, '\\$1');
+		});
 
 		process.stdout.write(values.join('\n'), function() {
 			process.exit(opts.exitCode || 0);
