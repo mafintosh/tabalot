@@ -18,7 +18,7 @@ var BASH_COMPLETION_DIR = [
 var TEMPLATE = fs.readFileSync(path.join(__dirname, 'template.sh'), 'utf-8');
 
 var detectBin = function() {
-	return (process.env._ || '').split('/').pop();
+	return (process.env._ || process.env.SUDO_COMMAND || '').split('/').pop();
 };
 
 module.exports = function(tab) {
