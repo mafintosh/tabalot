@@ -83,7 +83,7 @@ var call = function(fn, word, opts, callback) {
 };
 
 var complete = function(index, words) {
-	var ch = words[index][0];
+	var ch = (words[index] || '')[0];
 
 	words = words.map(function(word) {
 		if (word[0] === '"') return word.replace(/(^")|("$)/g, '').replace(/\\"/g, '"');
