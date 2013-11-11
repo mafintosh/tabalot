@@ -48,6 +48,7 @@ var tab = function(name) {
 	name = name || '__main__';
 	var opts = options[name] = clone(options['*']);
 	var pos = positionals[name] = clone(positionals['*']);
+	var alias = aliases[name] = clone(aliases['*']);
 
 	var onpositional = function(values) {
 		if (name === '*') return pos[index++] = toFunction(values);
@@ -57,7 +58,7 @@ var tab = function(name) {
 
 	var onoption = function(name, shorts, values) {
 		shorts.forEach(function(s) {
-			aliases[s] = name;
+			alias[s] = name;
 		});
 		opts[name] = toFunction(values);
 	};
@@ -125,14 +126,16 @@ var complete = function(index, words) {
 		return callback(null, names.map(opt));
 	}
 
+	var aka = aliases[cmd] || aliases.__main__ || aliases['*'] || {};
+
 	if (cur[0] === '-') {
-		var alias = aliases[deopt(cur)];
+		var alias = aka[deopt(cur)];
 		return alias ? callback(null, [opt(alias)], {filter:false}) : callback();
 	}
 
 	if (prev[0] === '-') {
 		var name = deopt(prev);
-		var fn = (options[cmd] || options.__main__ || options['*'] || {})[aliases[name] || name];
+		var fn = (options[cmd] || options.__main__ || options['*'] || {})[aka[name] || name];
 		if (fn) return call(fn, cur, argv, callback);
 		return callback();
 	}
