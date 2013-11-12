@@ -24,10 +24,11 @@ var clone = function(obj) {
 	return c;
 };
 
-var normalize = function(argv) {
+var normalize = function(cmd, argv) {
+	var aka = aliases[cmd] || aliases.__main__ || aliases['*'] || {};
 	Object.keys(argv).forEach(function(arg) {
-		if (!aliases[arg]) return;
-		var opt = aliases[arg];
+		if (!aka[arg]) return;
+		var opt = aka[arg];
 		argv[opt] = argv[opt] ? [].concat(argv[opt], argv[arg]) : argv[arg];
 		delete argv[arg];
 	});
@@ -94,9 +95,9 @@ var complete = function(index, words) {
 
 	var cur = words[index] || '';
 	var prev = words[index-1] || '';
-	var argv = normalize(minimist(words));
 	var _ = minimist(words.slice(0, index+1))._;
 	var cmd = _[0];
+	var argv = normalize(cmd, minimist(words));
 
 	var callback = function(err, values, opts) {
 		if (err) return process.exit(1);
@@ -165,7 +166,7 @@ tab.parse = function(argv) {
 		require('./completion')(tab);
 	}
 
-	argv = normalize(minimist(argv));
+	argv = minimist(argv);
 
 	var apply = function(cmd) {
 		var offset = cmd ? 1 : 0;
@@ -181,7 +182,7 @@ tab.parse = function(argv) {
 				args[i] = argv._[i+offset];
 			}
 
-			args.push(argv);
+			args.push(normalize(cmd, argv));
 			cmds[cmd].apply(null, args);
 		});
 		return true;
