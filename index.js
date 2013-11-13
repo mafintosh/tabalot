@@ -155,18 +155,26 @@ var complete = function(index, words) {
 	return callback(null, words);
 };
 
+var parseCompletion = function(argv) {
+	for (var i = 0; i < argv.length; i++) {
+		if (argv[i] === 'completion' && argv[i+1] === '--' && (argv[i-1] || '')[0] !== '-') {
+			return argv.slice(i+2).concat(argv.slice(0, i));
+		}
+	}
+	return null;
+};
+
 tab.parse = function(argv) {
 	argv = argv || process.argv.slice(2);
 
-	if (argv[0] === 'completion' && argv[1] === '--') {
-		complete(Number(argv[2]), argv.slice(3));
+	var completion = parseCompletion(argv);
+	if (completion) {
+		complete(Number(completion.shift()), completion);
 		return true;
-	}
-	if (argv[0] === 'completion') {
-		require('./completion')(tab);
 	}
 
 	argv = minimist(argv);
+	if (argv._[0] === 'completion') require('./completion')(tab);
 
 	var apply = function(cmd) {
 		var offset = cmd ? 1 : 0;
