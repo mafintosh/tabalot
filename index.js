@@ -9,6 +9,7 @@ var toFunction = function(values) {
 	if (typeof values === 'function') return values;
 
 	if (values === '@file') return require('./helpers').file;
+	if (values === '@dir')  return require('./helpers').dir;
 	if (values === '@host') return require('./helpers').host;
 
 	return function(callback) {
