@@ -136,6 +136,18 @@ tab()
 	})
 ```
 
+## Completion helpers
+
+Tabalot ships with support for a couple of typical completions.
+Use these by passing @name as the completer.
+
+``` js
+tab('hello')
+	('--file', '@file') // completes a file or directory
+	('--dir', '@dir')   // completes a directory
+	(--host', '@host')  // completes a hostname (by looking at known_hosts)
+```
+
 # License
 
 MIT
