@@ -12,7 +12,7 @@
 _{cmd}_completion () {
 	COMPREPLY=()
 	local output output_file
-	output="$({cmd} completion -- $(( $COMP_CWORD - 1 )) "${COMP_WORDS[@]:1}" 2> /dev/null)"
+	output="$({completion} completion -- $(( $COMP_CWORD - 1 )) "${COMP_WORDS[@]:1}" 2> /dev/null)"
 	[ $? == 15 ] && output_file=yes
 	local IFS=$'\n'
 	output=("$output")

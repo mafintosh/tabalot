@@ -165,6 +165,8 @@ var parseCompletion = function(argv) {
 	return null;
 };
 
+tab.completion = require('./completion');
+
 tab.parse = function(argv) {
 	argv = argv || process.argv.slice(2);
 
@@ -175,7 +177,7 @@ tab.parse = function(argv) {
 	}
 
 	argv = minimist(argv);
-	if (argv._[0] === 'completion') require('./completion')(tab);
+	if (argv._[0] === 'completion') tab('completion')('--save', '-s')('--bin', '-b')('--dir', '-d')(tab.completion);
 
 	var apply = function(cmd) {
 		var offset = cmd ? 1 : 0;
