@@ -31,6 +31,7 @@ module.exports = function(opts) {
 	}
 
 	var completion = TEMPLATE
+		.replace(/\{install\}/g, opts.install || bin+' completion')
 		.replace(/\{completion\}/g, opts.completion || bin)
 		.replace(/\{cmd\}/g, bin)
 		.replace(/\{completionDir\}/g, completionDir || '$BASH_COMPLETION_DIR')

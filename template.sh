@@ -1,10 +1,10 @@
 # Tab completion for {cmd}
 #
 # Auto install by doing:
-#  {cmd} completion --save
+#  {install} --save
 #
 # Which similar to
-#  {cmd} completion > {completionDir}/{cmd}
+#  {install} > {completionDir}/{cmd}
 #
 # Remember to source {profile} or restart your terminal afterwards
 # Manual install by adding the following to {profile}
