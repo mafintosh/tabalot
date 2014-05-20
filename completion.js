@@ -23,7 +23,7 @@ var detectBin = function() {
 
 module.exports = function(opts) {
 	var bin = opts.bin || detectBin();
-    var completionFilename = opts.filename || bin;
+	var completionFilename = opts.filename || bin;
 	var completionDir = opts.dir || BASH_COMPLETION_DIR;
 
 	if (!bin) {
