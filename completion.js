@@ -20,22 +20,10 @@ var detectBin = function() {
 	return (process.env._ || process.env.SUDO_COMMAND || '').split('/').pop().split(' ')[0];
 };
 
-function getParentPackageName() {
-    //Ensure we are not working as standalone
-    if (module.parent.parent) {
-        var parentFilename = module.parent.parent.filename.split('/');
-        parentFilename.pop();
-        var parentPkg = require(parentFilename.join('/') + "/package.json");
-        if (parentPkg.bin) {
-            return Object.keys(parentPkg.bin)[0];
-        }
-        return parentPkg.name;
-    }
-    return null;
-}
 
 module.exports = function(opts) {
 	var bin = opts.bin || detectBin();
+    var completionFilename = opts.filename || bin;
 	var completionDir = opts.dir || BASH_COMPLETION_DIR;
 
 	if (!bin) {
@@ -56,7 +44,7 @@ module.exports = function(opts) {
 			process.exit(2);
 		}
 		try {
-			fs.writeFileSync(path.join(completionDir, getParentPackageName()), completion);
+			fs.writeFileSync(path.join(completionDir, completionFilename), completion);
 		} catch (err) {
 			if (err.code === 'EACCES') {
 				console.error('Permission denied: could not write to '+path.join(completionDir, bin));
@@ -66,7 +54,7 @@ module.exports = function(opts) {
 			throw err;
 		}
 		try {
-			fs.writeSync(1, '# Completion for '+bin+' was installed.\n# To enable it now restart your terminal or\n\n. '+path.join(completionDir, getParentPackageName())+'\n\n');
+			fs.writeSync(1, '# Completion for '+bin+' was installed.\n# To enable it now restart your terminal or\n\n. '+path.join(completionDir, completionFilename)+'\n\n');
 		} catch (err) {
 			if (err.code !== 'EPIPE') throw err;
 		}
