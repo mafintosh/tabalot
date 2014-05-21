@@ -145,7 +145,7 @@ Use these by passing @name as the completer.
 tab('hello')
 	('--file', '@file') // completes a file or directory
 	('--dir', '@dir')   // completes a directory
-	(--host', '@host')  // completes a hostname (by looking at known_hosts)
+	('--host', '@host') // completes a hostname (by looking at known_hosts)
 ```
 
 # License
