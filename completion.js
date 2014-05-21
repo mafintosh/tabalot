@@ -16,13 +16,14 @@ var BASH_COMPLETION_DIR = [
 ].filter(fs.existsSync)[0];
 
 var TEMPLATE = fs.readFileSync(path.join(__dirname, 'template.sh'), 'utf-8');
-
 var detectBin = function() {
 	return (process.env._ || process.env.SUDO_COMMAND || '').split('/').pop().split(' ')[0];
 };
 
+
 module.exports = function(opts) {
 	var bin = opts.bin || detectBin();
+	var completionFilename = opts.filename || bin;
 	var completionDir = opts.dir || BASH_COMPLETION_DIR;
 
 	if (!bin) {
@@ -43,7 +44,7 @@ module.exports = function(opts) {
 			process.exit(2);
 		}
 		try {
-			fs.writeFileSync(path.join(completionDir, bin), completion);
+			fs.writeFileSync(path.join(completionDir, completionFilename), completion);
 		} catch (err) {
 			if (err.code === 'EACCES') {
 				console.error('Permission denied: could not write to '+path.join(completionDir, bin));
@@ -53,7 +54,7 @@ module.exports = function(opts) {
 			throw err;
 		}
 		try {
-			fs.writeSync(1, '# Completion for '+bin+' was installed.\n# To enable it now restart your terminal or\n\n. '+path.join(completionDir, bin)+'\n\n');
+			fs.writeSync(1, '# Completion for '+bin+' was installed.\n# To enable it now restart your terminal or\n\n. '+path.join(completionDir, completionFilename)+'\n\n');
 		} catch (err) {
 			if (err.code !== 'EPIPE') throw err;
 		}
