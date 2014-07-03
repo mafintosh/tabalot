@@ -4,6 +4,7 @@ var cmds = {};
 var options = {};
 var positionals = {};
 var aliases = {};
+var wildcards = {};
 
 var toFunction = function(values) {
 	if (typeof values === 'function') return values;
@@ -58,6 +59,10 @@ var tab = function(name) {
 		cmds[name] = values;
 	};
 
+	var onwildcard = function(values) {
+		wildcards[name] = toFunction(values);
+	}
+
 	var onoption = function(name, shorts, values) {
 		shorts.forEach(function(s) {
 			alias[s] = name;
@@ -65,7 +70,12 @@ var tab = function(name) {
 		opts[name] = toFunction(values);
 	};
 
-	var parse = function(a) {
+
+	var parse = function(a, b) {
+		if (a === '*') {
+			onwildcard(b);
+			return parse;
+		}
 		if (typeof a !== 'string' || a[0] !== '-') {
 			onpositional(a);
 			return parse;
@@ -143,7 +153,7 @@ var complete = function(index, words) {
 	}
 
 	index = _.length-1;
-	var pos = (positionals[cmd] || positionals.__main__ || {})[index];
+	var pos = (positionals[cmd] || positionals.__main__ || {})[index] || wildcards[cmd] || wildcards.__main__;
 	if (pos) return call(pos, cur, argv, callback);
 
 	if (prev[0] === '-' || cur[0] === '-') return callback();
