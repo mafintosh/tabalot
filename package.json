@@ -4,6 +4,6 @@
   "description": "Tab complete all the things",
   "repository": "git://github.com/mafintosh/tabalot.git",
   "dependencies": {
-    "minimist": "0.0.5"
+    "minimist": "^0.2.0"
   }
 }
