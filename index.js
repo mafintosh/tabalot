@@ -125,7 +125,7 @@ var complete = function(index, words) {
 		values = values.map(function(word) {
 			if (ch === '"') return word.replace(/"/g, '\\"')+'"';
 			if (ch === "'") return word.replace(/'/g, "\\'")+"'";
-			return word.replace(/([ ;!"'$()\[\]^{}&*?\\<>,`|])/g, '\\$1');
+			return word.replace(/([ :;!"'$()\[\]^{}&*?\\<>,`|])/g, '\\$1');
 		});
 
 		process.stdout.write(values.join('\n'), function() {
