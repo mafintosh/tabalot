@@ -204,7 +204,7 @@ tab.parse = function(argv, opts) {
 				args[i] = argv._[i+offset];
 			}
 
-			args.push(normalize(cmd, argv));
+			args.push(tab.argv = normalize(cmd, argv));
 			cmds[cmd].apply(null, args);
 		});
 		return true;
