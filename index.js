@@ -108,7 +108,7 @@ var complete = function(index, words) {
 	var prev = words[index-1] || '';
 	var _ = minimist(words.slice(0, index+1))._;
 	var cmd = _[0];
-	var argv = normalize(cmd, minimist(words));
+	var argv = tab.argv = normalize(cmd, minimist(words));
 
 	var callback = function(err, values, opts) {
 		if (err) return process.exit(1);
