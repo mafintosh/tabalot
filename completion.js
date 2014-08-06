@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var HOME = process.env.HOME || process.env.USERPROFILE;
+var HOME = process.env.HOME || process.env.USERPROFILE || '';
 
 var PROFILE = [
 	path.join(HOME, '.bashrc'),
