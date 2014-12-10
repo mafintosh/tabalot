@@ -44,6 +44,9 @@ And install the tab completion
 
 	tabtest completion --save # installs the completion to your bash_completion.d folder
 
+If you use zsh you can install it with
+	tabtest completion > ~./zshrc
+
 The app is now installed and ready to be tab completed.
 Open a shell and try the following
 
