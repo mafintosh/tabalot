@@ -8,6 +8,8 @@ var PROFILE = [
 	path.join(HOME, '.bash_profile')
 ].filter(fs.existsSync)[0] || path.join(HOME, '.bash_profile');
 
+var HAS_ZSHRC = fs.existsSync(path.join(HOME, '.zshrc'))
+
 var BASH_COMPLETION_DIR = [
 	'/usr/local/etc/bash_completion.d',
 	'/etc/bash_completion.d',
@@ -36,7 +38,8 @@ module.exports = function(opts) {
 		.replace(/\{completion\}/g, opts.completion || bin)
 		.replace(/\{cmd\}/g, bin)
 		.replace(/\{completionDir\}/g, completionDir || '$BASH_COMPLETION_DIR')
-		.replace(/\{profile\}/g, PROFILE.replace(HOME, '~'));
+		.replace(/\{profile\}/g, PROFILE.replace(HOME, '~'))
+		.replace(/\{zshrc-help\}/g, HAS_ZSHRC ? 'or ~/.zshrc' : '');
 
 	if (opts.save) {
 		if (!completionDir) {
